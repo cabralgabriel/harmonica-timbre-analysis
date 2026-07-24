@@ -1,39 +1,69 @@
 # Harmonica Timbre Analysis
 
-<p align="left">
-  Códigos e banco de dados utilizados no trabalho:<br>
-  <strong>Análise acústica da harmônica diatônica: <em>a sonoridade blues através de descritores de timbre</em></strong>
-</p>
 
+## overview
 
-## dados
+This repository contains the code and datasets used in the work:
 
-- **audios**: Gravações de áudios das notas isoladas.
+> <strong>Spectral centroid and attack time as timbre descriptors of the diatonic harmonica: quantifying the acoustic signature of the bending technique</strong>
 
-- **timbre_descritores.csv**: Dataset com valores de centroide e tempo de ataque para cada repetição (gerado após execução do *processamento.ipynb*).
+It provides the audio recordings, extracted acoustic descriptors, and the full analysis pipeline (Python for signal processing, R for statistical testing) supporting a controlled crossover design that examines the effects of playing technique (natural vs. bending) and comb material (wood vs. ABS plastic) on the harmonica's timbre.
+
+## repository structure
+
+```
+harmonica-timbre-analysis/
+├── data/
+│   ├── audios_v1/              # audio recordings from initial pilot study
+│   ├── audios_v2/
+│   ├── descriptors_v1.csv
+│   ├── descriptors_v2.csv
+│   └── rew_measurements/
+│       ├── *.mdat
+│       └── *.txt
+│       
+├── notebooks/
+│   ├── recording_randomization.ipynb
+│   ├── audio_processing.ipynb
+│   ├── data_visualization.ipynb
+│   └── permanova.ipynb
+├── requirements.txt
+└── README.md
+```
+
+## recording setup
+
+`data/rew_measurements/`: Measurements for room acoustic characterization (reverberation time and noise floor) performed using [Room EQ Wizard (REW)](https://www.roomeqwizard.com/).
+
+## audio data
+
+`data/audios_v2/`: Folder with audio recordings of the isolated notes.
+
+`data/descriptors_v2.csv`: Dataset containing spectral centroid and attack time values for each repetition (generated after running `notebooks/audio_processing.ipynb`).
 
 ## notebooks
 
-### Notebooks Python
+### Python Notebooks
 
-- **processamento.ipynb**: Realiza carregamento dos áudios, calcula STFT, descritores de timbre, espectrogramas e monta dataset.
+`recording_randomization.ipynb`: Generates the randomized order of combinations used during recording sessions.
 
-- **visualizacao_dados.ipynb**: Gera gráficos boxplots nota a nota e calcula medianas.
+`audio_processing.ipynb`: Loads the audio files, computes the STFT, timbre descriptors, spectrograms, and builds the dataset.
 
-#### Para usar (Linux):
+`data_visualization.ipynb`: Generates note-by-note boxplots and computes medians and IQR.
+
+#### How to use (Linux):
 ```bash
 python -m venv .venv
 source .venv/bin/activate  
 pip install -r requirements.txt
 ```
-(Essentia não está disponível via 'pip' para Windows.)
+(Essentia is not available via `pip` for Windows.)
 
-### Notebook R
+### R notebook
 
-- **permanova.ipynb**: Executa o teste da PERMANOVA, PERMDISP e testes post-hoc.
+`permanova.ipynb`: Runs the PERMANOVA and PERMDISP tests, along with post-hoc tests.
 
-
-#### Para usar:
+#### How to use
 ```r
 install.packages("remotes")
 remotes::install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
