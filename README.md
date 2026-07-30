@@ -1,5 +1,7 @@
 # Harmonica Timbre Analysis
 
+[![DOI](https://zenodo.org/badge/1083805985.svg)](https://doi.org/10.5281/zenodo.21710753)
+
 ## overview
 
 This repository contains the code and datasets used in the work:
@@ -20,7 +22,6 @@ harmonica-timbre-analysis/
 │   └── rew_measurements/
 │       ├── *.mdat              # reverberation time, left / right / left+right
 │       └── *.txt               # noise floor, five consecutive measurements
-│
 ├── notebooks/
 │   ├── recording_randomization.ipynb
 │   ├── audio_processing.ipynb
