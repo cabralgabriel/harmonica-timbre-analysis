@@ -27,6 +27,7 @@ harmonica-timbre-analysis/
 │   ├── data_visualization.ipynb
 │   ├── permanova.ipynb
 │   ├── harmonic_content_analysis.ipynb
+│   ├── level_and_structure_controls.ipynb
 │   └── design_robustness.ipynb
 ├── requirements.txt
 └── README.md
@@ -102,6 +103,8 @@ can be run independently, except `harmonic_content_analysis.ipynb`, which also r
 `data_visualization.ipynb`: Generates note-by-note boxplots and computes medians and IQR.
 
 `harmonic_content_analysis.ipynb`: Separates harmonic energy from the broadband noise floor, recomputes the centroid over the harmonic component alone, and describes how energy is distributed across frequency bands. Opens with a validation step that reproduces the published centroid from the raw audio, and closes with clipping and noise floor controls. Uses only the standard library and NumPy, because it needs the raw magnitude spectrum and a per-frame floor estimate rather than the descriptor algorithms.
+
+`level_and_structure_controls.ipynb`: Excludes the readings under which the high frequency result would not be attributable to the technique. Bent notes are quieter, so it checks whether level accounts for the difference, comparing the conditions at matched level rather than by extrapolation. It then verifies that the energy above 5 kHz is harmonically structured rather than rattle or a room mode, by contrasting the harmonic bins against the bins midway between them, checks for clipping, and profiles the harmonic amplitudes to distinguish a passive low-pass loading from a change of regime.
 
 `design_robustness.ipynb`: Reports the comb material effect as a bootstrap interval in interpretable units, corrects the within-plate contrast for the pitch difference it carries, checks that contrast against removal of either block, and derives the smallest p-value attainable once the five repetitions are treated as one experimental unit.
 
