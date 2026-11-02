@@ -6,7 +6,7 @@
 
 This repository contains the code and datasets used in the work:
 
-> <strong>Spectral centroid and attack time as timbre descriptors of the diatonic harmonica: quantifying the acoustic signature of the bending technique</strong>
+> <strong>Spectral signature of the bending technique on the diatonic harmonica: high-frequency suppression and the bounded effect of comb material</strong>
 
 It provides the audio recordings, extracted acoustic descriptors, and the full analysis pipeline (Python for signal processing, R for statistical testing) supporting a controlled crossover design that examines the effects of playing technique (natural vs. bending) and comb material (wood vs. ABS plastic) on the harmonica's timbre.
 
