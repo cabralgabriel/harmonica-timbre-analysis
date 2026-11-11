@@ -26,6 +26,7 @@ harmonica-timbre-analysis/
 │   ├── recording_randomization.ipynb
 │   ├── audio_processing.ipynb
 │   ├── data_visualization.ipynb
+│   ├── window_sensitivity.ipynb
 │   ├── permanova.ipynb
 │   ├── harmonic_content_analysis.ipynb
 │   ├── level_and_structure_controls.ipynb
@@ -73,7 +74,7 @@ with the block and is not.
 `data/audios_v2/`: Folder with audio recordings of the isolated notes. Files follow the pattern
 `harp<key>_<material>_<method>_<note>_rep<n>.wav`, for example `harpBb_abs_bend_E4_rep1.wav`.
 
-`data/descriptors_v2.csv`: Dataset containing spectral centroid and attack time values for each repetition (generated after running `notebooks/audio_processing.ipynb`). Columns:
+`data/descriptors_v2.csv`: Dataset containing the timbre, level and noise descriptors for each repetition (generated after running `notebooks/audio_processing.ipynb`). Columns:
 
 | Column | Meaning |
 |---|---|
@@ -85,29 +86,33 @@ with the block and is not.
 | `rep` | repetition index within the cell, 1 to 5 |
 | `centroid` | spectral centroid in Hz, magnitude weighted, averaged over the 2 to 5 s window |
 | `logattacktime` | log attack time, in log10 seconds |
-| `atk_time` | attack time in seconds, the linear equivalent of the column above |
+| `atk_time` | attack time in milliseconds, the linear equivalent of the column above |
+| `peak_dbfs` | peak level of the recording, in dBFS |
+| `rms_sus_dbfs` | RMS level of the sustained interval (2 to 5 s), in dBFS |
+| `rms_noise_dbfs` | RMS level of the noise segment, from the start of the recording until 0.15 s before the attack, in dBFS |
+| `snr_db` | signal-to-noise ratio between the sustained interval and the noise segment, in dB |
 
-The `v1` files come from the pilot collection reported in the original undergraduate thesis and are
-kept for reference. The analyses supporting the manuscript use `v2` throughout.
+The `v1` files come from the pilot collection reported in the original undergraduate thesis and are kept for reference. The analyses supporting the manuscript use `v2` throughout.
 
 ## notebooks
 
-Run them in the order below. Everything after `audio_processing.ipynb` reads `descriptors_v2.csv` and
-can be run independently, except `harmonic_content_analysis.ipynb`, which also reads the audio.
+Run them in the order below. Everything after `audio_processing.ipynb` reads `descriptors_v2.csv` and can be run independently, except `window_sensitivity.ipynb`, `harmonic_content_analysis.ipynb` and `level_and_structure_controls.ipynb`, which also read the audio, and `permanova.ipynb`, whose last section reads the output of `window_sensitivity.ipynb`.
 
 ### Python notebooks
 
 `recording_randomization.ipynb`: Generates the randomized order of combinations used during recording sessions, and defines the two blocks.
 
-`audio_processing.ipynb`: Loads the audio files, computes the STFT, timbre descriptors, spectrograms, and builds the dataset.
+`audio_processing.ipynb`: Loads the audio files, computes the STFT, timbre descriptors, spectrograms with waveform, the attack envelope figure, the level and noise descriptors, and builds the dataset.
 
-`data_visualization.ipynb`: Generates note-by-note boxplots and computes medians and IQR.
+`data_visualization.ipynb`: Generates note-by-note boxplots and computes medians and IQR, by note, method and material and by airflow direction.
+
+`window_sensitivity.ipynb`: Recomputes the spectral centroid from the raw samples under five configurations (window length, frequency grid and spectral weighting, changed one at a time) to check whether the 47 Hz resolution and the magnitude weighting drive the natural-to-bent ratio and writes `data/centroid_window_variants.csv`.
 
 `harmonic_content_analysis.ipynb`: Separates harmonic energy from the broadband noise floor, recomputes the centroid over the harmonic component alone, and describes how energy is distributed across frequency bands. Opens with a validation step that reproduces the published centroid from the raw audio, and closes with clipping and noise floor controls. Uses only the standard library and NumPy, because it needs the raw magnitude spectrum and a per-frame floor estimate rather than the descriptor algorithms.
 
 `level_and_structure_controls.ipynb`: Excludes the readings under which the high frequency result would not be attributable to the technique. Bent notes are quieter, so it checks whether level accounts for the difference, comparing the conditions at matched level rather than by extrapolation. It then verifies that the energy above 5 kHz is harmonically structured rather than rattle or a room mode, by contrasting the harmonic bins against the bins midway between them, checks for clipping, and profiles the harmonic amplitudes to distinguish a passive low-pass loading from a change of regime.
 
-`design_robustness.ipynb`: Reports the comb material effect as a bootstrap interval in interpretable units, corrects the within-plate contrast for the pitch difference it carries, checks that contrast against removal of either block, and derives the smallest p-value attainable once the five repetitions are treated as one experimental unit.
+`design_robustness.ipynb`: Reports the comb material effect as a bootstrap interval in interpretable units, corrects the within-plate contrast for the pitch difference it carries, checks that contrast against removal of either block, and derives the smallest p-value attainable once the five repetitions are treated as one experimental unit. It also compares the dispersion of natural and bent notes at the level of the 16 experimental units, with an exact permutation test, since pooling the four notes mixes differences in location with differences in spread.
 
 #### How to use (Linux):
 ```bash
@@ -119,7 +124,7 @@ pip install -r requirements.txt
 
 ### R notebook
 
-`permanova.ipynb`: Runs the PERMANOVA and PERMDISP tests, along with post-hoc tests. Descriptors are converted to z scores before the Euclidean distance matrix is assembled, so that the centroid, in hertz, does not dominate the log attack time, in log10 seconds. Multivariate R-squared values are conditional on that scaling choice; the univariate ones are not.
+`permanova.ipynb`: Runs the PERMANOVA and PERMDISP tests, along with post-hoc tests. Descriptors are converted to z scores before the Euclidean distance matrix is assembled, so that the centroid, in hertz, does not dominate the log attack time, in log10 seconds. Multivariate R-squared values are conditional on that scaling choice; the univariate ones are not. PERMDISP is also run within the eight note-by-method groups, and repeats the PERMANOVA for the centroid variants of `window_sensitivity.ipynb`.
 
 #### How to use
 ```r
